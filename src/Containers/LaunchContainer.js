@@ -3,38 +3,52 @@ import LaunchSelector from '../Components/LaunchSelector';
 import LaunchDetail from '../Components/LaunchDetail';
 
 class LaunchContainer extends React.Component {
-  constructor(props) {
+    constructor(props) {
     super(props);
     this.state = {
-      launches: [],
-      currentLaunch: null
-    };
-    this.handleLaunchSelected = this.handleLaunchSelected.bind(this);
+      items: [],
+      isLoaded: false,
+    }
   }
 
   componentDidMount() {
-    const url = 'https://api.spacexdata.com/v3/launches';
-
-    fetch(url)
+    fetch('https://api.spacexdata.com/v3/launches')
       .then(res => res.json())
-      .then(launches => this.setState({ launches: launches }))
-      .catch(err => console.error);
-  }
+      .then(json => {
+        this.setState({
+          isLoaded: true,
+          items: json,
+        })
+      });
 
-  handleLaunchSelected(index) {
-    const selectedLaunch = this.state.launches[index];
-    this.setState({ currentLaunch: selectedLaunch })
   }
 
   render() {
-    return (
-      <div>
-        <h2>Launch Container</h2>
-        <LaunchSelector launches={this.state.launches} onLaunchSelected={this.handleLaunchSelected} />
-        <LaunchDetail launch={this.state.currentLaunch} />
-      </div>
-    );
-  }
+    const { isLoaded, items } = this.state;
+
+    if (!isLoaded) {
+      return <div>Loading...</div>;
+    }
+
+    else {
+
+      return (
+        <div className="Launches">
+          <ul>
+            {items.map(item => (
+              <li key={item.launches}>
+                Flight ID: {item.flight_number}<br></br>
+                Mission Name: {item.mission_name}<br></br>
+                Launch Year: {item.launch_year}<br></br>
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
+
+    }
+
+    }
 }
 
 export default LaunchContainer;
