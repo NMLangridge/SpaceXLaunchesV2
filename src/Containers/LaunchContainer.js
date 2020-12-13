@@ -12,7 +12,9 @@ class LaunchContainer extends React.Component {
   }
 
   componentDidMount() {
-    fetch('https://api.spacexdata.com/v3/launches')
+    const url = 'https://api.spacexdata.com/v3/launches'
+
+    fetch(url)
       .then(res => res.json())
       .then(json => {
         this.setState({
